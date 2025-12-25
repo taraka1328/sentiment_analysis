@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 st.title("Analysis Dashboard")
 
 # Load results
-results = pd.read_csv("../data/sentiment_results.csv")
+results = pd.read_csv("data/sentiment_results.csv")
 
 # Show raw data
 st.subheader("Raw Data")
