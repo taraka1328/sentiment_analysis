@@ -28,3 +28,29 @@ st.subheader("Filter by Sentiment")
 option = st.selectbox("Choose sentiment", results['predicted_sentiment'].unique())
 filtered = results[results['predicted_sentiment'] == option]
 st.dataframe(filtered)
+
+import json
+
+SUMMARY_PATH = BASE_DIR / "data" / "summaries.json"
+
+with open(SUMMARY_PATH) as f:
+    summaries = json.load(f)
+
+emotion_summaries = summaries["emotion_summaries"]
+# ----------------------
+# Overall summary
+# ----------------------
+st.subheader("🧾 Overall Summary")
+st.info(summaries["overall_summary"])
+
+# ----------------------
+# Sentiment-wise summary
+# ----------------------
+st.subheader("📝 Sentiment-wise Summary")
+
+selected_sentiment = st.selectbox(
+    "Select sentiment to view summary",
+    options=list(emotion_summaries.keys())
+)
+
+st.success(emotion_summaries[selected_sentiment])
