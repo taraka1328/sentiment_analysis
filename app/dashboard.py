@@ -54,3 +54,71 @@ selected_sentiment = st.selectbox(
 )
 
 st.success(emotion_summaries[selected_sentiment])
+
+
+
+
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+from pathlib import Path
+
+# -------------------------------
+# Load data
+# -------------------------------
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_PATH = BASE_DIR / "data" / "sentiment_results.csv"
+
+df = pd.read_csv(DATA_PATH)
+
+# -------------------------------
+# Page Title
+# -------------------------------
+st.title("Sentiment Analysis Dashboard")
+
+# -------------------------------
+# WordCloud Function
+# -------------------------------
+def create_wordcloud(text):
+    wordcloud = WordCloud(
+        width=800,
+        height=400,
+        background_color="white",
+        stopwords=set(["the", "and", "is", "to", "of", "in", "for"])
+    ).generate(text)
+
+    fig, ax = plt.subplots()
+    ax.imshow(wordcloud, interpolation="bilinear")
+    ax.axis("off")
+    return fig
+
+# -------------------------------
+# Overall WordCloud
+# -------------------------------
+st.subheader("Overall WordCloud")
+
+all_text = " ".join(df["comment_text"].astype(str))
+
+fig = create_wordcloud(all_text)
+st.pyplot(fig)
+
+# -------------------------------
+# Sentiment-wise WordCloud
+# -------------------------------
+st.subheader("WordCloud by Sentiment")
+
+sentiment = st.selectbox(
+    "Select Sentiment",
+    df["predicted_sentiment"].unique()
+)
+
+filtered_text = " ".join(
+    df[df["predicted_sentiment"] == sentiment]["comment_text"].astype(str)
+)
+
+if filtered_text.strip():
+    fig = create_wordcloud(filtered_text)
+    st.pyplot(fig)
+else:
+    st.warning("No comments available for this sentiment.")
